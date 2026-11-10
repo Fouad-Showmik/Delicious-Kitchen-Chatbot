@@ -1,12 +1,11 @@
-from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
 
 from app.clients.llm_client import LLMClient, LLMClientError
 from app.schemas.chat import SESSION_ID_PATTERN, ChatRequest, ChatResponse
-from app.services import session_store
 from app.services.chat_service import ChatService
+from app.services.session_store import session_store
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
@@ -28,6 +27,5 @@ def chat(request: ChatRequest, service: ChatServiceDep):
 
 
 @router.delete("/{session_id}", status_code=204)
-
 def reset_chat(service: ChatServiceDep, session_id: SessionIdDep):
     service.reset(session_id)

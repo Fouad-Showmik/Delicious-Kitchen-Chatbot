@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#fff8ed">
+    <title>Delicious Kitchen</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" href="assets/dish.png">
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <main class="chat-card">
+      <header class="chat-header">
+        <div class="brand">
+          <span class="brand-logo" aria-hidden="true">
+  <img src="assets/dish.png" alt="">
+</span>
+          <div class="brand-copy">
+            <h1>Delicious Kitchen</h1>
+            <p>Your friendly home kitchen assistant</p>
+          </div>
+        </div>
+        <button class="new-chat-button" id="new-chat" type="button" aria-label="Start a new chat">
+          <span aria-hidden="true">＋</span>
+          <span>New chat</span>
+        </button>
+      </header>
+
+      <section class="conversation" aria-label="Chat conversation">
+        <ol class="message-list" id="message-list" aria-live="polite" aria-relevant="additions text"></ol>
+        <nav class="quick-replies" id="quick-replies" aria-label="Suggested questions">
+          <button type="button" class="quick-reply">What's on the menu?</button>
+          <button type="button" class="quick-reply">Vegetarian options?</button>
+          <button type="button" class="quick-reply">Delivery areas &amp; fees</button>
+          <button type="button" class="quick-reply">Opening hours</button>
+          <button type="button" class="quick-reply">Refund policy</button>
+        </nav>
+      </section>
+
+      <form class="composer" id="chat-form">
+        <label class="visually-hidden" for="message-input">Your message</label>
+        <input
+          id="message-input"
+          name="message"
+          type="text"
+          maxlength="500"
+          autocomplete="off"
+          placeholder="Ask us anything about the kitchen..."
+          aria-label="Your message"
+        >
+        <button class="send-button" id="send-button" type="submit" aria-label="Send message">
+          <span aria-hidden="true">➤</span>
+        </button>
+      </form>
+      <p class="composer-note">Made with care, served with a smile</p>
+    </main>
+  </body>
+</html>
