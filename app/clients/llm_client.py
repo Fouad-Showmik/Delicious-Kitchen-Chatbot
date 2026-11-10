@@ -1,8 +1,15 @@
+import logging
+
 import requests
 
 from app.core.config import settings
 
 #talk to the provider over HTTP and return raw JSON.
+
+logger = logging.getLogger(__name__)
+
+class LLMClientError(Exception):
+    pass
 
 class LLMClient: 
     def __init__(self):
@@ -18,6 +25,12 @@ class LLMClient:
             "input" : messages,
         }
 
-        response = requests.post(self.url, headers=self.headers, json=payload, timeout=30)
-        response.raise_for_status()
-        return response.json()
+        try:
+            response = requests.post(self.url, headers=self.headers, json=payload, timeout=30)
+            response.raise_for_status()
+            return response.json()
+        
+        except requests.RequestException as exc:
+            logger.exception("")
+            raise LLMClientError(str(exc)) from exc
+            

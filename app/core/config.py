@@ -1,11 +1,21 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    llm_api_key: str
-    model_name: str = "gpt-6-luna"
-    llm_base_url: str = "https://api.openai.com/v1"
+    llm_base_url : str
+    llm_api_key : str
+    model_name : str
+
+    system_prompt_file : str = "prompts/delicious_kitchen.md"
+    max_history_message : int
+    session_ttl_seconds : int
 
     model_config = SettingsConfigDict(env_file=".env")
+
+    @property
+    def system_prompt(self):
+        return Path(self.system_prompt_file).read_text(encoding="utf-8")
 
 settings = Settings()

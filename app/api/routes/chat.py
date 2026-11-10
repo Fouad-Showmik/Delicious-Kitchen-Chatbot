@@ -1,21 +1,33 @@
+from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
-from app.clients.llm_client import LLMClient
-from app.schemas.chat import ChatRequest, ChatResponse
+from app.clients.llm_client import LLMClient, LLMClientError
+from app.schemas.chat import SESSION_ID_PATTERN, ChatRequest, ChatResponse
+from app.services import session_store
 from app.services.chat_service import ChatService
 
-router = APIRouter(prefix="/chat", tags=["chat"])
+router = APIRouter(prefix="/api/chat", tags=["chat"])
 
 
 def get_chat_service():
-    return ChatService(LLMClient())
+    return ChatService(LLMClient(), session_store)
 
 
 ChatServiceDep = Annotated[ChatService, Depends(get_chat_service)]
+SessionIdDep = Annotated[str, Path(pattern=SESSION_ID_PATTERN)]
 
 
 @router.post("", response_model=ChatResponse)
 def chat(request: ChatRequest, service: ChatServiceDep):
-    return service.ask(request.message)
+    try:
+        return service.ask(request.session_id, request.message)
+    except LLMClientError:
+        raise HTTPException(status_code=502, detail="Sorry, I'm having trouble right now. Please try again.")
+
+
+@router.delete("/{session_id}", status_code=204)
+
+def reset_chat(service: ChatServiceDep, session_id: SessionIdDep):
+    service.reset(session_id)
