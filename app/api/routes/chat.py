@@ -1,8 +1,9 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException, Path, Request
 
 from app.clients.llm_client import LLMClient, LLMClientError
+from app.core.limiter import limiter
 from app.schemas.chat import SESSION_ID_PATTERN, ChatRequest, ChatResponse
 from app.services.chat_service import ChatService
 from app.services.session_store import session_store
@@ -19,9 +20,11 @@ SessionIdDep = Annotated[str, Path(pattern=SESSION_ID_PATTERN)]
 
 
 @router.post("", response_model=ChatResponse)
-def chat(request: ChatRequest, service: ChatServiceDep):
+@limiter.limit("10/minute")
+@limiter.limit("100/day")
+def chat(request: Request, body: ChatRequest, service: ChatServiceDep):
     try:
-        return service.ask(request.session_id, request.message)
+        return service.ask(body.session_id, body.message)
     except LLMClientError:
         raise HTTPException(status_code=502, detail="Sorry, I'm having trouble right now. Please try again.")
 
